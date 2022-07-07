@@ -1,0 +1,135 @@
+---
+title: "Análisis Exploratorio"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Analice el comportamiento de los distintos equipos a través de análisis exploratorios, limpieza de datos y visualización de datos. La base de datos se llama Primer_Tiempo2020.csv
+
+## 1. LIBRERÍAS
+
+```{r}
+library(quanteda)
+library(dplyr)
+library(tidyverse)
+library(utf8)
+library(ggplot2)
+```
+
+## 2. BASE DE DATOS
+
+# Se cargan los datos y se revisa con qué tipo de variables se trabajarán.
+
+```{r}
+datos <- read_csv("C:/Users/cvill/OneDrive/Documentos/GitHub/Data_Mining/Actividades/Actividad 1. Análisis Exploratorio de datos/Primer_Tiempo2020.csv")
+head(datos)
+```
+
+## 3. VARIABLES
+
+# Se eliminan de la base de datos las variables que no se utilizarán para el análisis.
+
+```{r}
+datos <- datos[,!(colnames(datos) %in% c("id_partido", "fasepartido", "local", "tiempo","formationUsed", "torneo"))]
+
+head(datos)
+```
+
+## 4. SUB DATAFRAMES
+
+# Se crean las bases "Pases" y "Tiros" que contienen información relevante para el campo que quieran ser analizado.
+
+```{r}
+
+Pases = datos[,colnames(datos) %in% c("equipo", "partido", "accuratePass", "totalPass", "precision_pases")]
+Pases = Pases[order(Pases$precision_pases, decreasing = TRUE),]
+
+head(Pases)
+```
+
+```{r}
+Tiros = datos[,colnames(datos) %in% c("equipo", "partido", "goals", "ontargetScoringAtt", "totalScoringAtt", "blockedScoringAtt", "shotOffTarget", "precision_tiros")]
+Tiros = Tiros[order(Tiros$goals, decreasing = TRUE),]
+
+head(Tiros)
+```
+
+## 5. ANÁLISIS DE EQUIPO
+
+# Se seleccionará un equipo de la base de datos para analizar el rendimiento de pases y tiros registrados.
+
+```{r}
+equipo <- unique(datos['equipo'])
+
+
+equipo1 <- "Colo Colo"
+
+equipo
+equipo1
+```
+
+```{r}
+equipo_data <- filter(datos, equipo == equipo1)
+equipo_Pases <- filter(Pases, equipo == equipo1)
+equipo_Tiros <- filter(Tiros, equipo == equipo1)
+```
+
+```{r}
+#Se elimina de la base la columna "equipo"
+equipo_Pases <- equipo_Pases[,!(colnames(equipo_Pases) %in% c("equipo"))] 
+
+#Se añade el promedio de pases a la base de Colo Colo
+Promedios_Pases <- c("Promedio Pases",mean(equipo_Pases$accuratePass),mean(equipo_Pases$totalPass),mean(equipo_Pases$precision_pases))
+equipo_Pases <- rbind(equipo_Pases, Promedios_Pases)
+
+#Se añade el máximo de pases a la base de Colo Colo
+Max_Pases <- c("Max Pases",max(equipo_Pases$accuratePass),max(equipo_Pases$totalPass),max(equipo_Pases$precision_pases))
+equipo_Pases <- rbind(equipo_Pases, Max_Pases)
+
+#Se añade el mínimo de pases a la base de Colo Colo
+Min_Pases <- c("Min Pases",min(equipo_Pases$accuratePass),min(equipo_Pases$totalPass),min(equipo_Pases$precision_pases))
+equipo_Pases <- rbind(equipo_Pases, Min_Pases)
+
+head(equipo_Pases)
+```
+
+```{r}
+#Se elimina de la base la columna "equipo"
+equipo_Tiros <- equipo_Tiros[,!(colnames(equipo_Tiros) %in% c("equipo"))] 
+
+#Se añade el promedio de precisión de tiros a la base
+Promedios_Tiros <- c("Promedio Pases",mean(equipo_Tiros$totalScoringAtt),mean(equipo_Tiros$goals),mean(equipo_Tiros$precision_tiros))
+equipo_Tiros <- rbind(equipo_Tiros, Promedios_Tiros)
+
+#Se añade el máximo de pases a la base
+Max_Tiros <- c("Max Pases",max(equipo_Tiros$totalScoringAtt),max(equipo_Tiros$goals),max(equipo_Tiros$precision_tiros))
+equipo_Tiros <- rbind(equipo_Tiros, Max_Tiros)
+
+#Se añade el mínimo de pases a la base
+Min_Tiros <- c("Min Pases",min(equipo_Tiros$totalScoringAtt),min(equipo_Tiros$goals),min(equipo_Tiros$precision_tiros))
+equipo_Tiros <- rbind(equipo_Tiros, Min_Tiros)
+
+equipo_Tiros
+```
+
+## 6. GRÁFICOS DE RENDIMIENTO
+
+# Se visualiza el comportamiento de los pases y tiros comparandolos con la precisión que obtuvieron en base a los partidos jugados.
+
+```{r}
+
+equipo_data_Pases <- equipo_data[order(equipo_data$accuratePass, decreasing = FALSE),]
+
+dotchart(equipo_data_Pases$totalPass, labels = utf8_encode(equipo_data_Pases$partido), main="Pases Acertados", pch = 16, col=c("darkblue","dodgerblue"),lcolor="gray90", cex=0.8, xlab = "Pases", ylab = "Partido", cex.main=2,cex.lab=1.5)
+
+
+
+equipo_data_Tiro <- equipo_data[order(equipo_data$accuratePass, decreasing = FALSE),]
+
+dotchart(equipo_data_Tiro$precision_tiros, labels = utf8_encode(equipo_data_Tiro$partido), main="Precisión de Tiros", pch = 16, col=c("darkblue","dodgerblue"),lcolor="gray90", cex=0.8, xlab = "precisión", ylab = "Partido", cex.main=2,cex.lab=1.5)
+
+
+```
