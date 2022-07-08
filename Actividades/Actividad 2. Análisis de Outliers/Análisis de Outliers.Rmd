@@ -1,0 +1,90 @@
+---
+title: "Actividad 2. Análisis de Outliers"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# De la base de datos de Pokemon, realice un análisis de Outliers con algunas de las variables numéricas y concluir una relación a partir de los resultados obtenidos.
+
+## 1. LIBRERÍAS
+
+```{r}
+library(dplyr)
+```
+
+## 2. BASE DE DATOS
+
+```{r}
+Pokedex <- read.csv("C:/Users/cvill/OneDrive/Documentos/GitHub/Data_Mining/Actividades/Actividad 2. Análisis de Outliers/Pokemon.csv")
+No_Legendarios <- filter(Pokedex, Legendary == "False")
+Legendarios <- filter(Pokedex, Legendary == "True")
+
+head(Pokedex)
+
+```
+
+## 3. BOXPLOT
+
+```{r}
+#Permite trabajar con el dataframe sin hacer referencias a este.
+attach(Pokedex)
+
+#Se proyectan los BOXPLOT en base a una variable numérica, siendo categorizada por la variable "Generation".
+
+boxplot(HP ~ Generation, col = c("Red3","Green3","Blue3","Yellow3","Orange3","Pink3"))
+boxplot(Attack ~ Generation, col = c("Red3","Green3","Blue3","Yellow3","Orange3","Pink3"))
+boxplot(Defense ~ Generation, col = c("Red3","Green3","Blue3","Yellow3","Orange3","Pink3"))
+boxplot(Sp..Atk ~ Generation, col = c("Red3","Green3","Blue3","Yellow3","Orange3","Pink3"))
+boxplot(Sp..Def ~ Generation, col = c("Red3","Green3","Blue3","Yellow3","Orange3","Pink3"))
+boxplot(Speed ~ Generation, col = c("Red3","Green3","Blue3","Yellow3","Orange3","Pink3"))
+
+boxplot(Total ~ Generation, col = c("Red3","Green3","Blue3","Yellow3","Orange3","Pink3"))
+```
+
+```{r}
+attach(Legendarios)
+
+boxplot(HP ~ Generation, col = c("Red3","Green3","Blue3","Yellow3","Orange3","Pink3"))
+boxplot(Attack ~ Generation, col = c("Red3","Green3","Blue3","Yellow3","Orange3","Pink3"))
+boxplot(Defense ~ Generation, col = c("Red3","Green3","Blue3","Yellow3","Orange3","Pink3"))
+boxplot(Sp..Atk ~ Generation, col = c("Red3","Green3","Blue3","Yellow3","Orange3","Pink3"))
+boxplot(Sp..Def ~ Generation, col = c("Red3","Green3","Blue3","Yellow3","Orange3","Pink3"))
+boxplot(Speed ~ Generation, col = c("Red3","Green3","Blue3","Yellow3","Orange3","Pink3"))
+
+boxplot(Total ~ Generation, col = c("Red3","Green3","Blue3","Yellow3","Orange3","Pink3"))
+```
+
+```{r}
+attach(No_Legendarios)
+
+boxplot(HP ~ Generation, col = c("Red3","Green3","Blue3","Yellow3","Orange3","Pink3"))
+boxplot(Attack ~ Generation, col = c("Red3","Green3","Blue3","Yellow3","Orange3","Pink3"))
+boxplot(Defense ~ Generation, col = c("Red3","Green3","Blue3","Yellow3","Orange3","Pink3"))
+boxplot(Sp..Atk ~ Generation, col = c("Red3","Green3","Blue3","Yellow3","Orange3","Pink3"))
+boxplot(Sp..Def ~ Generation, col = c("Red3","Green3","Blue3","Yellow3","Orange3","Pink3"))
+boxplot(Speed ~ Generation, col = c("Red3","Green3","Blue3","Yellow3","Orange3","Pink3"))
+
+boxplot(Total ~ Generation, col = c("Red3","Green3","Blue3","Yellow3","Orange3","Pink3"))
+```
+
+```{r}
+#Se selecciona el tipo del pokemon y que no sea legendario
+NL_Tipo <- filter(Pokedex, Type.1 == "Fire", Legendary == "False")
+
+attach(NL_Tipo)
+
+boxplot(HP ~ Generation, col = c("Red3","Green3","Blue3","Yellow3","Orange3","Pink3"))
+boxplot(Attack ~ Generation, col = c("Red3","Green3","Blue3","Yellow3","Orange3","Pink3"))
+boxplot(Defense ~ Generation, col = c("Red3","Green3","Blue3","Yellow3","Orange3","Pink3"))
+boxplot(Sp..Atk ~ Generation, col = c("Red3","Green3","Blue3","Yellow3","Orange3","Pink3"))
+boxplot(Sp..Def ~ Generation, col = c("Red3","Green3","Blue3","Yellow3","Orange3","Pink3"))
+boxplot(Speed ~ Generation, col = c("Red3","Green3","Blue3","Yellow3","Orange3","Pink3"))
+
+boxplot(Total ~ Generation, col = c("Red3","Green3","Blue3","Yellow3","Orange3","Pink3"))
+
+#Tamaño de la muestra
+length(NL_Tipo$Type.1)
+```
